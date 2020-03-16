@@ -4,7 +4,7 @@ import 'ui/home_page.dart';
 
 void main() {
   runApp(MaterialApp(
-    title: "Loja de Livros",
+    title: "BookStore Brasil",
     home: _SplashScreen(),
     debugShowCheckedModeBanner: false,
   ));
