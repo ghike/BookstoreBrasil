@@ -171,7 +171,7 @@ class _HomePageState extends State<HomePage> {
                             width: MediaQuery.of(context).size.width,
                             margin: EdgeInsets.symmetric(horizontal: 10.0),
                             decoration: BoxDecoration(
-                              color: Colors.green,
+                              color: Colors.grey[300],
                             ),
                             child: Image.network(
                               imgURL + it.imagem,
