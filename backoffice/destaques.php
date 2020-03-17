@@ -7,7 +7,7 @@ $json = file_get_contents('php://input');
  
 $obj = json_decode($json,true);
 
-$SQL="SELECT * FROM livros"; 
+$SQL="SELECT * FROM livros WHERE DESTAQUE = 1"; 
 $resultado = mysqli_query($conn,$SQL);
     while ($dados=mysqli_fetch_array($resultado))
     {

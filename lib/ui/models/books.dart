@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 
 var baseurl = "https://hikke.xyz/bookstore/livros.php";
+var alternateurl = "https://hikke.xyz/bookstore/destaques.php";
 
 class API {
   static getTotal() {
@@ -12,6 +13,12 @@ class API {
 
   static getBooks() {
     var url = baseurl;
+
+    return http.get(url);
+  }
+
+  static getDestaque(){
+    var url = alternateurl;
 
     return http.get(url);
   }

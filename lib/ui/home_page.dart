@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'models/books.dart';
-import 'utils/appBar.dart';
-import 'utils/tabBar.dart';
-import 'utils/carousel.dart';
 import 'utils/loadingHome.dart';
 import 'product_page.dart';
 import 'cart_page.dart';
@@ -17,6 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _current = 0;
   var isloading = false;
   int total;
   bool refresh = false;
@@ -24,6 +23,8 @@ class _HomePageState extends State<HomePage> {
   var url = "https://hikke.xyz/bookstore/livros.php";
   String imgURL = 'https://hikke.xyz/bookstore/images/';
   List<Books> listBooks = new List<Books>();
+  List<Books> listDestaqueBooks = new List<Books>();
+  List<Books> sliderDestaqueBooks = new List<Books>();
   List<Books> showBooks = new List<Books>();
 
   Future<String> _getBooks() async {
@@ -38,12 +39,25 @@ class _HomePageState extends State<HomePage> {
           });
         }
       },
-          API.getBooks().then((response) {
+          API.getBooks().then(
+            (response) {
+              if (response.statusCode == 200) {
+                setState(() {
+                  Iterable list = json.decode(response.body);
+                  listBooks =
+                      list.map((model) => Books.fromJson(model)).toList();
+                  showBooks = listBooks;
+                });
+              }
+            },
+          ),
+          API.getDestaque().then((response) {
             if (response.statusCode == 200) {
               setState(() {
-                Iterable list = json.decode(response.body);
-                listBooks = list.map((model) => Books.fromJson(model)).toList();
-                showBooks = listBooks;
+                Iterable listD = json.decode(response.body);
+                listDestaqueBooks =
+                    listD.map((model) => Books.fromJson(model)).toList();
+                sliderDestaqueBooks = listDestaqueBooks;
               });
             }
           }));
@@ -133,7 +147,44 @@ class _HomePageState extends State<HomePage> {
                     textAlign: TextAlign.left),
                 Padding(
                   padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: CarouselHomeSlider(),
+                  child: CarouselSlider(
+                    height: 350.0,
+                    initialPage: 0,
+                    enlargeCenterPage: true,
+                    autoPlay: true,
+                    reverse: false,
+                    enableInfiniteScroll: true,
+                    autoPlayInterval: Duration(seconds: 4),
+                    autoPlayAnimationDuration: Duration(milliseconds: 1000),
+                    pauseAutoPlayOnTouch: Duration(seconds: 10),
+                    scrollDirection: Axis.horizontal,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _current = index;
+                      });
+                    },
+                    items: sliderDestaqueBooks.map((it) {
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return GestureDetector(
+                              child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.symmetric(horizontal: 10.0),
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                            ),
+                            child: Image.network(
+                              imgURL + it.imagem,
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          onTap: (){
+                            _navigationProductPage(context, it);
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
                 ),
                 Text("OUTROS PRODUTOS",
                     style: TextStyle(
