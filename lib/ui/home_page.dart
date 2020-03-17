@@ -1,11 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'models/books.dart';
-import 'utils/appBar.dart';
-import 'utils/tabBar.dart';
-import 'utils/carousel.dart';
 import 'utils/loadingHome.dart';
+import 'product_page.dart';
+import 'cart_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,6 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _current = 0;
   var isloading = false;
   int total;
   bool refresh = false;
@@ -20,6 +23,8 @@ class _HomePageState extends State<HomePage> {
   var url = "https://hikke.xyz/bookstore/livros.php";
   String imgURL = 'https://hikke.xyz/bookstore/images/';
   List<Books> listBooks = new List<Books>();
+  List<Books> listDestaqueBooks = new List<Books>();
+  List<Books> sliderDestaqueBooks = new List<Books>();
   List<Books> showBooks = new List<Books>();
 
   Future<String> _getBooks() async {
@@ -34,20 +39,99 @@ class _HomePageState extends State<HomePage> {
           });
         }
       },
-          API.getBooks().then((response) {
+          API.getBooks().then(
+            (response) {
+              if (response.statusCode == 200) {
+                setState(() {
+                  Iterable list = json.decode(response.body);
+                  listBooks =
+                      list.map((model) => Books.fromJson(model)).toList();
+                  showBooks = listBooks;
+                });
+              }
+            },
+          ),
+          API.getDestaque().then((response) {
             if (response.statusCode == 200) {
               setState(() {
-                Iterable list = json.decode(response.body);
-                listBooks = list.map((model) => Books.fromJson(model)).toList();
-                showBooks = listBooks;
+                Iterable listD = json.decode(response.body);
+                listDestaqueBooks =
+                    listD.map((model) => Books.fromJson(model)).toList();
+                sliderDestaqueBooks = listDestaqueBooks;
               });
             }
           }));
     }
   }
 
+  void _navigationProductPage(context, Books books) {
+    if (kIsWeb) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductPage(),
+            settings: RouteSettings(
+              arguments: books,
+            ),
+          ));
+    } else if (Platform.isIOS) {
+      Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => ProductPage(),
+            settings: RouteSettings(
+              arguments: books,
+            ),
+          ));
+    } else if (Platform.isAndroid) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductPage(),
+            settings: RouteSettings(
+              arguments: books,
+            ),
+          ));
+    }
+  }
+
+  void _navigationCartPage() {
+    if (kIsWeb) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CartPage(),
+          ));
+    } else if (Platform.isIOS) {
+      Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => CartPage(),
+          ));
+    } else if (Platform.isAndroid) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CartPage(),
+          ));
+    }
+  }
+
   Widget loadedHome(BuildContext context) {
     return Material(
+        child: CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: Colors.orange,
+        middle: Image(
+          image: AssetImage("assets/img/white-logo.png"),
+        ),
+        trailing: GestureDetector(
+          child: Icon(CupertinoIcons.shopping_cart, color: Colors.white),
+          onTap: () {
+            _navigationCartPage();
+          },
+        ),
+      ),
       child: SingleChildScrollView(
         child: Padding(
             padding: EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 20.0),
@@ -63,7 +147,44 @@ class _HomePageState extends State<HomePage> {
                     textAlign: TextAlign.left),
                 Padding(
                   padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: CarouselHomeSlider(),
+                  child: CarouselSlider(
+                    height: 350.0,
+                    initialPage: 0,
+                    enlargeCenterPage: true,
+                    autoPlay: true,
+                    reverse: false,
+                    enableInfiniteScroll: true,
+                    autoPlayInterval: Duration(seconds: 4),
+                    autoPlayAnimationDuration: Duration(milliseconds: 1000),
+                    pauseAutoPlayOnTouch: Duration(seconds: 10),
+                    scrollDirection: Axis.horizontal,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _current = index;
+                      });
+                    },
+                    items: sliderDestaqueBooks.map((it) {
+                      return Builder(
+                        builder: (BuildContext context) {
+                          return GestureDetector(
+                              child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            margin: EdgeInsets.symmetric(horizontal: 10.0),
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                            ),
+                            child: Image.network(
+                              imgURL + it.imagem,
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          onTap: (){
+                            _navigationProductPage(context, it);
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
                 ),
                 Text("OUTROS PRODUTOS",
                     style: TextStyle(
@@ -83,7 +204,9 @@ class _HomePageState extends State<HomePage> {
                           child: Card(
                               elevation: 2,
                               child: InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    _navigationProductPage(context, it);
+                                  },
                                   child: Container(
                                       child: Row(
                                     children: <Widget>[
@@ -142,13 +265,11 @@ class _HomePageState extends State<HomePage> {
                         ));
                   }).toList(),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: 84)
-                )
+                Padding(padding: EdgeInsets.only(top: 84))
               ],
             )),
       ),
-    );
+    ));
   }
 
   @override
@@ -156,21 +277,6 @@ class _HomePageState extends State<HomePage> {
     return WillPopScope(
         onWillPop: () async => false,
         child: CupertinoPageScaffold(
-            navigationBar: CupertinoNavigationBar(
-              backgroundColor: Colors.orange,
-              middle: Image(
-                image: AssetImage("assets/img/white-logo.png"),
-              ),
-              trailing: GestureDetector(
-                child: CircleAvatar(
-                  radius: 14,
-                  child: ClipOval(child: Image.asset("assets/img/person.png")),
-                ),
-                onTap: () {
-                  print(";");
-                },
-              ),
-            ),
             child: CupertinoTabScaffold(
                 tabBar: CupertinoTabBar(
                   backgroundColor: Color.fromARGB(220, 255, 255, 255),
@@ -179,27 +285,29 @@ class _HomePageState extends State<HomePage> {
                     BottomNavigationBarItem(
                         icon: Icon(CupertinoIcons.home), title: Text("Início")),
                     BottomNavigationBarItem(
-                        icon: Icon(CupertinoIcons.shopping_cart),
-                        title: Text("Carrinho")),
+                        icon: Icon(CupertinoIcons.person_solid),
+                        title: Text("Sua Conta")),
                   ],
                 ),
                 tabBuilder: (BuildContext context, int index) {
                   assert(index >= 0 && index <= 1);
                   switch (index) {
                     case 0:
-                      return FutureBuilder(
-                          future: _getBooks(),
-                          builder: (BuildContext context,
-                              AsyncSnapshot<String> snapshot) {
-                            Widget children;
+                      return CupertinoTabView(builder: (context) {
+                        return FutureBuilder(
+                            future: _getBooks(),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<String> snapshot) {
+                              Widget children;
 
-                            if (listBooks.length < 1) {
-                              children = loadingHome(context);
-                            } else {
-                              children = loadedHome(context);
-                            }
-                            return children;
-                          });
+                              if (listBooks.length < 1) {
+                                children = loadingHome(context);
+                              } else {
+                                children = loadedHome(context);
+                              }
+                              return children;
+                            });
+                      });
                     case 1:
                       return null;
                   }
