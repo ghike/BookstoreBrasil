@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
+<<<<<<< HEAD
 import 'package:carousel_slider/carousel_slider.dart';
+=======
+>>>>>>> develop
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';

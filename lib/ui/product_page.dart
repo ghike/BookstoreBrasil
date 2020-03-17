@@ -129,9 +129,12 @@ class _ProductPageState extends State<ProductPage> {
                               highlightElevation: 1,
                               onPressed: () {},
                             )),
+<<<<<<< HEAD
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 40)
+=======
+>>>>>>> develop
                       )
                     ],
                   )))),
