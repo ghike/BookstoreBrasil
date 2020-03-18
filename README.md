@@ -2,7 +2,7 @@
 
 Book Store Brasil é um aplicativo desenvolvido em Flutter, que junto de seu Back Office, simula uma interface de livraria virtual, permitindo ao usuário visualizar os livros que estão disponíveis para compra e ao administrador, adicionar, editar ou remover estes itens.
 
-![Image of Shimmering](https://hikke.xyz/bsbrazil/imgData/shimmer2.gif) ![Image of Carousel](https://hikke.xyz/bsbrazil/imgData/carousel.gif) ![Image of Cart](https://hikke.xyz/bsbrazil/imgData/cart.gif) ![Image of Account](https://hikke.xyz/bsbrazil/imgData/account.jpg) ![Image of Back Office](https://hikke.xyz/bsbrazil/imgData/adm2.jpg)
+![Image of Shimmering](https://hikke.xyz/bsbrazil/imgData/shimmer2.gif) ![Image of Carousel](https://hikke.xyz/bsbrazil/imgData/carousel.gif) ![Image of Cart](https://hikke.xyz/bsbrazil/imgData/cart3.gif) ![Image of Account](https://hikke.xyz/bsbrazil/imgData/account.jpg) ![Image of Back Office](https://hikke.xyz/bsbrazil/imgData/adm2.jpg)
 
 ## Descrição
 A página inicial do aplicativo é composta por um Carousel junto de um ListView que exibe todos os itens cadastrados no Banco de Dados. Para que um item seja exibido no Carousel, ele precisa ser cadastrado como "Sim" na opção "Destacar no Carrossel?" da interface administrativa. 
