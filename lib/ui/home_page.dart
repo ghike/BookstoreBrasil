@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:LojaLivros/ui/account_page.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -124,12 +125,6 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.orange,
         middle: Image(
           image: AssetImage("assets/img/white-logo.png"),
-        ),
-        trailing: GestureDetector(
-          child: Icon(CupertinoIcons.shopping_cart, color: Colors.white),
-          onTap: () {
-            _navigationCartPage();
-          },
         ),
       ),
       child: SingleChildScrollView(
@@ -309,7 +304,9 @@ class _HomePageState extends State<HomePage> {
                             });
                       });
                     case 1:
-                      return null;
+                      return CupertinoTabView(builder: (context){
+                        return AccountPage();
+                      });
                   }
                 })));
   }

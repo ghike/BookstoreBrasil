@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'models/books.dart';
+
 int qtd = 1;
-double price = 10.00;
-double newprice = price * qtd;
+int maxqtd = 0;
+double newprice = 0;
+double showprice = 0;
+String imgURL = 'https://hikke.xyz/bookstore/images/';
 
 class CartPage extends StatefulWidget {
   @override
@@ -11,34 +15,45 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  void addProduct() {
-    setState(() {
-      qtd++;
-      newprice = price * qtd;
-    });
-  }
-
-  void removeProduct() {
-    setState(() {
-      if (qtd != 1) {
-        qtd--;
-        newprice = price * qtd;
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final Books books = ModalRoute.of(context).settings.arguments;
+    double baseprice = double.parse(books.preco);
+    newprice = baseprice * qtd;
+    showprice = num.parse(newprice.toStringAsFixed(2));
+    maxqtd = int.parse(books.estoque);
+
+    void addProduct() {
+      setState(() {
+        if (qtd < maxqtd) {
+          qtd++;
+          newprice = baseprice * qtd;
+          showprice = num.parse(newprice.toStringAsFixed(2));
+        }
+      });
+    }
+
+    void removeProduct() {
+      setState(() {
+        if (qtd != 1) {
+          qtd--;
+          newprice = baseprice * qtd;
+          showprice = num.parse(newprice.toStringAsFixed(2));
+        }
+      });
+    }
+
     return Material(
         child: CupertinoPageScaffold(
             backgroundColor: Colors.white,
             navigationBar: CupertinoNavigationBar(
               backgroundColor: Colors.orange,
               leading: CupertinoNavigationBarBackButton(
-                color: Colors.white,
-                previousPageTitle: "Voltar",
-                onPressed: () => Navigator.of(context).pop(),
-              ),
+                  color: Colors.white,
+                  previousPageTitle: "Voltar",
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  }),
               middle: Text(
                 "Carrinho",
                 style: TextStyle(color: Colors.white),
@@ -64,8 +79,8 @@ class _CartPageState extends State<CartPage> {
                             decoration: BoxDecoration(
                                 image: DecorationImage(
                                     fit: BoxFit.fitHeight,
-                                    image: NetworkImage(
-                                        "https://hikke.xyz/bookstore/images/51JF95r45vL.jpg"))),
+                                    image:
+                                        NetworkImage(imgURL + books.imagem))),
                           ),
                           Container(
                               alignment: Alignment.topLeft,
@@ -76,10 +91,10 @@ class _CartPageState extends State<CartPage> {
                                   children: <Widget>[
                                     ListTile(
                                       title: Text(
-                                        "Clean Architecture: A Craftsman's Guide to Software Structure and Design",
+                                        books.titulo,
                                         style: TextStyle(fontSize: 13),
                                       ),
-                                      subtitle: Text("Robert C. Martin",
+                                      subtitle: Text(books.autor,
                                           style: TextStyle(fontSize: 12)),
                                     ),
                                     Container(
@@ -93,7 +108,6 @@ class _CartPageState extends State<CartPage> {
                           Container(
                               child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: <Widget>[
                               Row(
                                 mainAxisAlignment:
@@ -135,9 +149,9 @@ class _CartPageState extends State<CartPage> {
                               ),
                               Padding(
                                   padding: EdgeInsets.only(top: 7),
-                                  child: Text("R\$$newprice",
+                                  child: Text("R\$$showprice",
                                       style: TextStyle(
-                                          color: Colors.red, fontSize: 18.0))),
+                                          color: Colors.red, fontSize: 15.5))),
                             ],
                           )),
                         ],
