@@ -1,5 +1,8 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'cart_page.dart';
 import 'models/books.dart';
 
 String imgURL = 'https://hikke.xyz/bookstore/images/';
@@ -12,6 +15,38 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   @override
   Widget build(BuildContext context) {
+
+    void _navigationInfoCart(context, Books books) {
+    if (kIsWeb) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CartPage(),
+            settings: RouteSettings(
+              arguments: books,
+            ),
+          ));
+    } else if (Platform.isIOS) {
+      Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => CartPage(),
+            settings: RouteSettings(
+              arguments: books,
+            ),
+          ));
+    } else if (Platform.isAndroid) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CartPage(),
+            settings: RouteSettings(
+              arguments: books,
+            ),
+          ));
+    }
+  }
+  
     final Books books = ModalRoute.of(context).settings.arguments;
 
     return Material(
@@ -26,12 +61,6 @@ class _ProductPageState extends State<ProductPage> {
             ),
             middle: Image(
               image: AssetImage("assets/img/white-logo.png"),
-            ),
-            trailing: GestureDetector(
-              child: Icon(CupertinoIcons.shopping_cart, color: Colors.white),
-              onTap: () {
-                print(";");
-              },
             ),
           ),
           child: SingleChildScrollView(
@@ -127,7 +156,9 @@ class _ProductPageState extends State<ProductPage> {
                                 ],
                               ),
                               highlightElevation: 1,
-                              onPressed: () {},
+                              onPressed: () {
+                                _navigationInfoCart(context, books);
+                              },
                             )),
                       ),
                       Padding(

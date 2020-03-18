@@ -11,12 +11,6 @@ Widget loadingHome(BuildContext context) {
             middle: Image(
               image: AssetImage("assets/img/white-logo.png"),
             ),
-            trailing: GestureDetector(
-              child: Icon(CupertinoIcons.shopping_cart, color: Colors.white),
-              onTap: () {
-                print(";");
-              },
-            ),
           ),
           child: SingleChildScrollView(
               child: Padding(
