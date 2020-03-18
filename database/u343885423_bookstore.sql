@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 15/03/2020 às 22:33
+-- Tempo de geração: 18/03/2020 às 06:02
 -- Versão do servidor: 10.2.30-MariaDB
 -- Versão do PHP: 7.2.26
 
@@ -34,6 +34,13 @@ CREATE TABLE `administradores` (
   `EMAIL` varchar(255) NOT NULL,
   `SENHA` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Despejando dados para a tabela `administradores`
+--
+
+INSERT INTO `administradores` (`ID`, `NOME`, `EMAIL`, `SENHA`) VALUES
+(1, 'Admin', 'admin@bsbrasil.com', 'BSBrasil123');
 
 -- --------------------------------------------------------
 
@@ -69,7 +76,8 @@ INSERT INTO `livros` (`ID`, `TITULO`, `AUTOR`, `PRECO`, `ESTOQUE`, `IMAGEM`, `DE
 (11, 'Clean Code: A Handbook of Agile Software Craftsmanship', 'Robert C. Martin', '180,04', 16, '51d1qVhmAmL.jpg', 0),
 (12, 'Clean Agile: Back to Basics', 'Robert C. Martin', '174,20', 29, '41tc6iwhQUL.jpg', 0),
 (13, 'Building Microservices: Designing Fine-Grained Systems', 'Sam Newman', '209,30', 6, '51e6hCWFZNL.jpg', 0),
-(14, 'Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems', 'Martin Kleppmann', '82,99', 37, '514xvNk9rTL.jpg', 1);
+(14, 'Designing Data-Intensive Applications: The Big Ideas Behind Reliable, Scalable, and Maintainable Systems', 'Martin Kleppmann', '82,99', 37, '514xvNk9rTL.jpg', 1),
+(30, 'A Maldição do Tigre', 'Colleen Houck', '14.90', 12, '1009090959.jpg', 0);
 
 --
 -- Índices de tabelas apagadas
@@ -95,13 +103,13 @@ ALTER TABLE `livros`
 -- AUTO_INCREMENT de tabela `administradores`
 --
 ALTER TABLE `administradores`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de tabela `livros`
 --
 ALTER TABLE `livros`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
