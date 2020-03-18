@@ -1,5 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:http/http.dart' as http;
 
 import 'models/books.dart';
 
@@ -22,6 +27,96 @@ class _CartPageState extends State<CartPage> {
     newprice = baseprice * qtd;
     showprice = num.parse(newprice.toStringAsFixed(2));
     maxqtd = int.parse(books.estoque);
+
+    Future cartSend() async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return WillPopScope(
+              onWillPop: () async => false,
+              child: SimpleDialog(
+                  backgroundColor: Colors.white,
+                  children: <Widget>[
+                    Center(
+                      child: Column(children: [
+                        CircularProgressIndicator(),
+                      ]),
+                    )
+                  ]));
+        });
+
+      var url = 'https://hikke.xyz/bookstore/carrinho.php';
+
+      var data = {
+        'titulo': books.titulo,
+        'quantidade': qtd
+      };
+
+      var response = await http.post(url, body: json.encode(data));
+
+      var message = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        setState(() {
+          Navigator.of(context).pop();
+        });
+      } else
+        setState(() {
+          Navigator.of(context).pop();
+        });
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          if (kIsWeb){
+            return AlertDialog(
+              title: Text(message),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("OK"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          }
+          else if (Platform.isAndroid) {
+            return AlertDialog(
+              title: Text(message),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("OK"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          } else if (Platform.isIOS) {
+            return CupertinoAlertDialog(
+              title: Text(message,
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w500)  
+              ),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("OK", 
+                  style: TextStyle(color: Colors.blue)),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          }
+        },
+      );
+    }
 
     void addProduct() {
       setState(() {
@@ -155,7 +250,41 @@ class _CartPageState extends State<CartPage> {
                             ],
                           )),
                         ],
-                      )
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(top: 150.0),
+                        child: Container(
+                            height: 50.0,
+                            width: MediaQuery.of(context).size.width,
+                            child: MaterialButton(
+                              color: Colors.orange[400],
+                              highlightColor: Colors.amber,
+                              splashColor: Colors.amber,
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(CupertinoIcons.shopping_cart,
+                                      color: Colors.white),
+                                  Padding(
+                                    padding:
+                                        EdgeInsets.only(left: 8.0, right: 8.0),
+                                    child: VerticalDivider(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Container(
+                                      alignment: Alignment.center,
+                                      child: Text("Finalizar Pedido",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: MediaQuery.of(context).size.width / 20)))
+                                ],
+                              ),
+                              highlightElevation: 1,
+                              onPressed: () {
+                                cartSend();
+                              },
+                            )),
+                      ),
                     ])))));
   }
 }

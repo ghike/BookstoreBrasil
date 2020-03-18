@@ -47,9 +47,11 @@ var url = "https://SEUSERVIDOR/livros.php";
 String imgURL = 'https://SEUSERVIDOR/images/';
 ```
 
-Em ```lib/ui/cart_page.dart```, linha 10:
+Em ```lib/ui/cart_page.dart```, linha 10 e linha 49:
 ```dart
 String imgURL = 'https://SEUSERVIDOR/images/';
+...
+var url = 'https://SEUSERVIDOR/carrinho.php';
 ```
 
 Em ```lib/ui/product_page.dart```, linha 8:
